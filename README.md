@@ -112,6 +112,22 @@ Claude: Reading issue #89... I see the problem is in core/auth.py:142.
 [2 turns to productive work]
 ```
 
+## Clear Without Fear
+
+One underrated benefit: **you can aggressively clear context without losing anything.**
+
+Claude Code's context window fills up. When it does, you have three options — all of which used to mean losing your working state:
+
+| Action | What It Does | Without Memory | With Memory |
+|--------|-------------|---------------|-------------|
+| `/compact` | Compresses context | Lossy — nuance disappears | `/compact` command saves state first |
+| `/clear` | Wipes conversation | Everything gone | Memory files persist in git |
+| Help → Clear Cache & Restart | Nuclear option | Total amnesia | Hooks re-inject context on restart |
+
+With 50 First Sessions installed, even the most aggressive reset — clearing cache and restarting the entire application — just means Claude wakes up, hooks fire, memory loads, and you're back in 5 seconds.
+
+**Stop hoarding context.** Clear early, clear often. Your memory files survive everything.
+
 ## Memory Files
 
 The memory system uses 6 files in `.claude/memory/`. Not all are required — start with the first three:
