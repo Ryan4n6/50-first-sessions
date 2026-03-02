@@ -2,6 +2,10 @@
 
 **Because Claude keeps forgetting who you are.**
 
+<p align="center">
+  <img src="assets/hero.png" alt="50 First Sessions — She forgets everything. Every. Single. Session." width="700">
+</p>
+
 A session memory system for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Three hooks, four slash commands, and a set of memory file templates that cure Claude's amnesia problem.
 
 ---
