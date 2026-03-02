@@ -10,7 +10,7 @@ A session memory system for [Claude Code](https://docs.anthropic.com/en/docs/cla
 
 Every Claude Code session starts from scratch. Your AI pair programmer wakes up each morning with no idea who you are, what your project does, what you shipped yesterday, or what's on fire today. It re-reads your codebase, re-discovers your conventions, and asks the same orientation questions — burning 15-20% of your context window before doing anything useful.
 
-You are Drew Barrymore's character. Every single day, you build the same relationship from scratch. Unlike the movie, there is no romantic payoff. Just wasted tokens and repeated explanations.
+You are Adam Sandler. Claude is Drew Barrymore. Every single morning, you re-introduce yourself from scratch. Unlike the movie, there is no romantic payoff. Just wasted tokens and repeated explanations.
 
 ## The Fix
 
