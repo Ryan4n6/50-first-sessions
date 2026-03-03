@@ -50,7 +50,9 @@ if command -v gh &>/dev/null || [ -x /usr/local/bin/gh ]; then
     echo ""
 
     # If on a feature branch, inject the linked issue body
-    ISSUE_NUM=$(echo "$BRANCH" | grep -oE '[0-9]+' | head -1 || true)
+    # Match issue numbers after common prefixes (#, -, /). Prefer last match
+    # to skip version prefixes like v2 in "fix/v2-issue-42-auth"
+    ISSUE_NUM=$(echo "$BRANCH" | grep -oE '(#|[-/])([0-9]+)' | grep -oE '[0-9]+' | tail -1 || true)
     if [ -n "$ISSUE_NUM" ]; then
         echo "Active issue (#$ISSUE_NUM):"
         $GH issue view "$ISSUE_NUM" --json title,body \
@@ -65,6 +67,23 @@ if command -v gh &>/dev/null || [ -x /usr/local/bin/gh ]; then
         --jq '.[] | "  \(.displayTitle): \(.conclusion) (\(.createdAt))"' 2>/dev/null \
         || echo "  (no runs or gh not configured)"
     echo ""
+fi
+
+# Memory staleness check
+if [ -f "$REPO_ROOT/.claude/memory/file-map.md" ]; then
+    MEMORY_AGE=$(stat -f %m "$REPO_ROOT/.claude/memory/file-map.md" 2>/dev/null || \
+                 stat -c %Y "$REPO_ROOT/.claude/memory/file-map.md" 2>/dev/null || echo 0)
+    # Count source files modified after file-map.md was last updated
+    STALE_COUNT=$(find "$REPO_ROOT" -name '*.py' -o -name '*.js' -o -name '*.ts' -o -name '*.go' -o -name '*.rs' \
+        2>/dev/null | head -200 \
+        | while read f; do
+            FILE_MOD=$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null || echo 0)
+            [ "$FILE_MOD" -gt "$MEMORY_AGE" ] && echo stale
+          done | wc -l | tr -d ' ')
+    if [ "$STALE_COUNT" -gt 5 ]; then
+        echo "WARNING: file-map.md may be stale ($STALE_COUNT source files changed since last update)"
+        echo ""
+    fi
 fi
 
 echo "=== END SESSION CONTEXT ==="

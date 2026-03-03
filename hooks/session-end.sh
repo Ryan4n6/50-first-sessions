@@ -17,8 +17,9 @@ cd "$REPO_ROOT"
 # Cleanup happens from main repo or next session.
 # ============================================================
 IN_WORKTREE=false
+GIT_DIR="$(git rev-parse --git-dir 2>/dev/null || echo "")"
 GIT_COMMON="$(git rev-parse --git-common-dir 2>/dev/null || echo "")"
-if echo "$GIT_COMMON" | grep -q '/worktrees/'; then
+if [ -n "$GIT_DIR" ] && [ -n "$GIT_COMMON" ] && [ "$GIT_DIR" != "$GIT_COMMON" ]; then
     IN_WORKTREE=true
 fi
 
@@ -27,9 +28,23 @@ git add .claude/memory/ 2>/dev/null || true
 
 # Check if there's anything to commit
 if ! git diff --cached --quiet 2>/dev/null; then
+    BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
     CHANGED=$(git diff --cached --name-only | wc -l | tr -d ' ')
-    git commit -m "memory: auto-persist session learnings ($CHANGED files)" --no-verify 2>/dev/null || true
-    echo "Auto-committed $CHANGED memory file(s)."
+    CHANGED_FILES=$(git diff --cached --name-only | sed 's|.claude/memory/||' | tr '\n' ', ' | sed 's/,$//')
+
+    # Quick secret scan before committing
+    SECRETS_FOUND=$(git diff --cached --diff-filter=AM -- .claude/memory/ 2>/dev/null | \
+        grep -iE '(api[_-]?key|secret[_-]?key|token|password|credential|private[_-]?key)\s*[:=]' | \
+        grep -vE '(example|placeholder|your-|TODO|CHANGEME|xxx|template)' || true)
+
+    if [ -n "$SECRETS_FOUND" ]; then
+        echo "WARNING: Possible secrets detected in memory files. Skipping auto-commit."
+        echo "Review staged changes with: git diff --cached .claude/memory/"
+        git reset HEAD .claude/memory/ 2>/dev/null || true
+    else
+        git commit -m "memory($BRANCH): update $CHANGED_FILES" --no-verify 2>/dev/null || true
+        echo "Auto-committed $CHANGED memory file(s)."
+    fi
 else
     echo "No memory file changes to persist."
 fi

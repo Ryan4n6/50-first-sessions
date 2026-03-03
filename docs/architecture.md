@@ -97,7 +97,7 @@ Does:
 - `git add .claude/memory/` — stages any memory file changes
 - Commits with auto-generated message
 - Only runs if there are actual changes
-- Worktree safety guard: skips if running inside a git worktree (prevents committing to temp branches)
+- Worktree safety guard: commits to worktree branch but never deletes the worktree or branch
 
 This ensures memory changes are never lost, even if the human forgets to commit.
 
@@ -110,12 +110,21 @@ Hooks are configured in `.claude/settings.json`:
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup|resume|compact",
+        "matcher": "startup",
         "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/session-start.sh"
-          }
+          { "type": "command", "command": "bash .claude/hooks/session-start.sh" }
+        ]
+      },
+      {
+        "matcher": "resume",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/session-start.sh" }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/session-start.sh" }
         ]
       }
     ],
@@ -123,10 +132,7 @@ Hooks are configured in `.claude/settings.json`:
       {
         "matcher": "",
         "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/session-end.sh"
-          }
+          { "type": "command", "command": "bash .claude/hooks/session-end.sh" }
         ]
       }
     ]

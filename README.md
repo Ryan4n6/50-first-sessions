@@ -174,6 +174,18 @@ See [docs/customization.md](docs/customization.md) for:
 - Custom hooks (adding project-specific context injection)
 - Teams (shared memory conventions)
 
+## Known Limitations
+
+- **Memory can go stale.** If you refactor code but don't update memory files, Claude will operate on outdated context. The session-start hook warns when `file-map.md` looks stale, but ultimately you need to keep memory files current.
+
+- **Team merge conflicts.** Memory files are git-tracked. If two people edit the same branch's memory files simultaneously, you'll get merge conflicts. Mitigate by using per-branch memory updates and squash merges.
+
+- **Windows not supported.** Hooks are bash scripts. Windows users need WSL or Git Bash.
+
+- **Auto-commits use `--no-verify`.** To prevent hook failures from blocking memory persistence, auto-commits bypass pre-commit hooks. The session-end script includes its own secret scanning, but project-specific pre-commit checks are skipped.
+
+- **No tests for the system itself.** The hooks and installer don't have automated tests. They're small scripts (~70 lines each) but bugs are caught by users, not CI.
+
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (the CLI)

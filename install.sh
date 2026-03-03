@@ -27,7 +27,7 @@ for cmd in start compact ship stats; do
         cp "$COMMANDS_DIR/$cmd.md" "$COMMANDS_DIR/$cmd.md.bak"
     fi
     curl -sSL "$REPO_URL/commands/$cmd.md" -o "$COMMANDS_DIR/$cmd.md"
-    echo "  Installed /\$cmd → $COMMANDS_DIR/$cmd.md"
+    echo "  Installed /$cmd → $COMMANDS_DIR/$cmd.md"
 done
 
 echo ""
