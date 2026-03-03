@@ -50,7 +50,9 @@ if command -v gh &>/dev/null || [ -x /usr/local/bin/gh ]; then
     echo ""
 
     # If on a feature branch, inject the linked issue body
-    ISSUE_NUM=$(echo "$BRANCH" | grep -oE '[0-9]+' | head -1 || true)
+    # Match issue numbers after common prefixes (#, -, /). Prefer last match
+    # to skip version prefixes like v2 in "fix/v2-issue-42-auth"
+    ISSUE_NUM=$(echo "$BRANCH" | grep -oE '(#|[-/])([0-9]+)' | grep -oE '[0-9]+' | tail -1 || true)
     if [ -n "$ISSUE_NUM" ]; then
         echo "Active issue (#$ISSUE_NUM):"
         $GH issue view "$ISSUE_NUM" --json title,body \
