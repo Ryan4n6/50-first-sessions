@@ -269,6 +269,21 @@ Add to `.gitignore`:
 
 ---
 
+## Managing Git History
+
+### Auto-Commit Messages
+
+The session-end hook creates commits like `memory(feat/42-auth): update known-issues.md`.
+On long-lived branches, these can accumulate.
+
+**Recommended mitigations:**
+
+- **Squash merge feature branches** — `gh pr merge --squash` collapses all commits (including memory commits) into one clean commit on main.
+- **Interactive rebase before PR** — `git rebase -i main` lets you squash memory commits into related work commits.
+- **Disable auto-commit** — Remove the `SessionEnd` hook from `.claude/settings.json` and commit memory files manually with `/compact` or `/ship`.
+
+---
+
 ## Disabling Features
 
 ### No Auto-Commit on Session End
