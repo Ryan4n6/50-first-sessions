@@ -30,7 +30,38 @@ Run two Claude Code sessions simultaneously:
 └─────────────────────────────────────────────────┘
 ```
 
-## Setup
+## Quick Start
+
+```bash
+# One command to launch the full monitoring dashboard
+bash docs/scripts/watch-session.sh /path/to/project
+```
+
+This creates a tmux session with 3 panes:
+
+```
+┌──────────────────────────────────┐
+│                                  │
+│     Claude Code (executor)       │
+│     You see every tool call,     │
+│     every file read, every test  │
+│                                  │
+├─────────────────┬────────────────┤
+│  Git Monitor    │  File Watcher  │
+│  live commits   │  modified .py  │
+│  working tree   │  new tests     │
+└─────────────────┴────────────────┘
+```
+
+**tmux cheat sheet:**
+| Key | What It Does |
+|-----|-------------|
+| `Ctrl+B`, arrow keys | Switch between panes |
+| `Ctrl+B`, `Z` | Zoom/unzoom a pane (fullscreen toggle) |
+| `Ctrl+B`, `D` | Detach (session keeps running in background) |
+| `tmux attach -t claude-watch` | Re-attach from any terminal |
+
+## Manual Setup
 
 ### 1. Create an Implementation Plan
 
@@ -117,3 +148,19 @@ tmux send-keys -t impl C-c C-c
 - **Check commits, not screen output** — git log is the ground truth of what actually shipped
 - **Don't duplicate work** — if the executor is researching something, don't also search for it in your session
 - **Pre-configure secrets** before launching — the executor can't ask you for passwords or API keys in `--dangerously-skip-permissions` mode
+
+## Learning by Watching
+
+One underrated benefit: **watching Claude work teaches you how Claude works.**
+
+When you delegate a task and come back to a finished PR, you learn nothing. When you watch the tmux pane in real-time, you see:
+
+- Which files Claude reads before making changes (and which it skips)
+- How it structures tests before writing implementation (TDD in action)
+- What search patterns it uses to find code (`Grep` vs `Glob` vs `Read`)
+- When it makes mistakes and how it recovers
+- The exact sequence of tool calls for common operations
+
+This turns delegation into apprenticeship. You're not just getting work done — you're learning the patterns that make AI-assisted development effective. Next time, you can guide Claude better because you've seen how it thinks.
+
+**Pro tip:** Zoom into the executor pane (`Ctrl+B, Z`) during interesting moments — like when it's debugging a failing test or refactoring a complex function. That's where the real learning happens.
