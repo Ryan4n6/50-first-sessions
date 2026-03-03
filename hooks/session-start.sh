@@ -69,4 +69,21 @@ if command -v gh &>/dev/null || [ -x /usr/local/bin/gh ]; then
     echo ""
 fi
 
+# Memory staleness check
+if [ -f "$REPO_ROOT/.claude/memory/file-map.md" ]; then
+    MEMORY_AGE=$(stat -f %m "$REPO_ROOT/.claude/memory/file-map.md" 2>/dev/null || \
+                 stat -c %Y "$REPO_ROOT/.claude/memory/file-map.md" 2>/dev/null || echo 0)
+    # Count source files modified after file-map.md was last updated
+    STALE_COUNT=$(find "$REPO_ROOT" -name '*.py' -o -name '*.js' -o -name '*.ts' -o -name '*.go' -o -name '*.rs' \
+        2>/dev/null | head -200 \
+        | while read f; do
+            FILE_MOD=$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null || echo 0)
+            [ "$FILE_MOD" -gt "$MEMORY_AGE" ] && echo stale
+          done | wc -l | tr -d ' ')
+    if [ "$STALE_COUNT" -gt 5 ]; then
+        echo "WARNING: file-map.md may be stale ($STALE_COUNT source files changed since last update)"
+        echo ""
+    fi
+fi
+
 echo "=== END SESSION CONTEXT ==="
