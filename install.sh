@@ -26,7 +26,7 @@ for cmd in start compact ship stats; do
         echo "  Backing up existing $cmd.md → $cmd.md.bak"
         cp "$COMMANDS_DIR/$cmd.md" "$COMMANDS_DIR/$cmd.md.bak"
     fi
-    curl -sSL "$REPO_URL/commands/$cmd.md" -o "$COMMANDS_DIR/$cmd.md"
+    curl -sSL "$REPO_URL/.claude/commands/$cmd.md" -o "$COMMANDS_DIR/$cmd.md"
     echo "  Installed /$cmd → $COMMANDS_DIR/$cmd.md"
 done
 
@@ -50,7 +50,7 @@ if [ "${1:-}" = "--project" ]; then
     HOOKS_DIR="$PROJECT_ROOT/.claude/hooks"
     mkdir -p "$HOOKS_DIR"
     for hook in session-start session-end; do
-        curl -sSL "$REPO_URL/hooks/$hook.sh" -o "$HOOKS_DIR/$hook.sh"
+        curl -sSL "$REPO_URL/.claude/hooks/$hook.sh" -o "$HOOKS_DIR/$hook.sh"
         chmod +x "$HOOKS_DIR/$hook.sh"
         echo "  Installed hook: .claude/hooks/$hook.sh"
     done
@@ -58,7 +58,7 @@ if [ "${1:-}" = "--project" ]; then
     # Settings (only if not exists — don't overwrite existing hooks config)
     SETTINGS="$PROJECT_ROOT/.claude/settings.json"
     if [ ! -f "$SETTINGS" ]; then
-        curl -sSL "$REPO_URL/config/settings.json" -o "$SETTINGS"
+        curl -sSL "$REPO_URL/.claude/settings.json" -o "$SETTINGS"
         echo "  Created .claude/settings.json"
     else
         echo "  .claude/settings.json already exists — skipped (check docs/customization.md to merge)"

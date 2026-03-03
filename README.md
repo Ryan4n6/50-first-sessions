@@ -62,27 +62,27 @@ This sets up hooks and memory templates for that specific project.
 
 ```bash
 # Global (once — works across all projects)
-cp commands/*.md ~/.claude/commands/
+cp .claude/commands/*.md ~/.claude/commands/
 
 # Per project (from inside your project directory)
 mkdir -p .claude/hooks .claude/memory
-cp hooks/* .claude/hooks/
-cp config/settings.json .claude/settings.json
-cp memory-templates/* .claude/memory/
-chmod +x .claude/hooks/*.sh
+cp .claude/hooks/* YOUR_PROJECT/.claude/hooks/
+cp .claude/settings.json YOUR_PROJECT/.claude/settings.json
+cp memory-templates/* YOUR_PROJECT/.claude/memory/
+chmod +x YOUR_PROJECT/.claude/hooks/*.sh
 ```
 
 ## What's in the Box
 
 | File | What It Does |
 |------|-------------|
-| `commands/start.md` | `/start` — Session kickoff. Reads memory, checks git/GitHub, orients you in 3-4 sentences. |
-| `commands/compact.md` | `/compact` — Saves working state to memory files + GitHub before context compaction. |
-| `commands/ship.md` | `/ship` — Full branch close-out: tests, acceptance criteria, closing comments, labels, lessons learned. |
-| `commands/stats.md` | `/stats` — Baseball card of session metrics from your Claude Code logs. |
-| `hooks/session-start.sh` | Auto-fires on session start/resume/compact. Injects branch, commits, issues, memory into context. |
-| `hooks/session-end.sh` | Auto-fires on session end. Commits memory file changes to git. Worktree-safe. |
-| `config/settings.json` | Template for `.claude/settings.json` — wires up the hooks. |
+| `.claude/commands/start.md` | `/start` — Session kickoff. Reads memory, checks git/GitHub, orients you in 3-4 sentences. |
+| `.claude/commands/compact.md` | `/compact` — Saves working state to memory files + GitHub before context compaction. |
+| `.claude/commands/ship.md` | `/ship` — Full branch close-out: tests, acceptance criteria, closing comments, labels, lessons learned. |
+| `.claude/commands/stats.md` | `/stats` — Baseball card of session metrics from your Claude Code logs. |
+| `.claude/hooks/session-start.sh` | Auto-fires on session start/resume/compact. Injects branch, commits, issues, memory into context. |
+| `.claude/hooks/session-end.sh` | Auto-fires on session end. Commits memory file changes to git. Worktree-safe. |
+| `.claude/settings.json` | Claude Code project settings — wires up the hooks. |
 | `memory-templates/` | 6 starter memory files: architecture, issues, file map, handover, vision, platform docs. |
 | `playbook.md` | Plain-English guide for non-technical users. "No git knowledge needed." |
 
