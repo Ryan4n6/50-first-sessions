@@ -149,9 +149,28 @@ tmux send-keys -t impl C-c C-c
 - **Don't duplicate work** — if the executor is researching something, don't also search for it in your session
 - **Pre-configure secrets** before launching — the executor can't ask you for passwords or API keys in `--dangerously-skip-permissions` mode
 
+## Forensic Auditing
+
+The strongest reason to watch: **Claude's summaries are lossy.**
+
+When Claude reports "I updated the auth module and fixed the tests," you're trusting its judgment about what happened. The tmux pane shows the raw feed — every `Read`, every `Grep`, every `Edit` with actual file paths and content. You see what *actually* happened, not the summary.
+
+**What the raw feed catches that summaries don't:**
+
+- **Wrong file reads** — Claude opens `auth.py` when it should have opened `auth/clever_sso.py`
+- **Phantom searches** — grepping for a function name that doesn't exist, then silently moving on
+- **Edit drift** — modifying line 145 when the bug is on line 245
+- **TDD violations** — writing implementation before tests (the summary will still say "TDD")
+- **Context waste** — re-reading the same file 5 times because it forgot the contents
+- **Silent failures** — a test command returns non-zero but Claude keeps going
+
+The git monitor pane catches **drift at the commit level**. If commits start appearing that don't match the plan, you see it in real-time instead of discovering 15 bad commits later.
+
+It's the difference between reading the incident report and watching the body camera footage.
+
 ## Learning by Watching
 
-One underrated benefit: **watching Claude work teaches you how Claude works.**
+The second benefit: **watching Claude work teaches you how Claude works.**
 
 When you delegate a task and come back to a finished PR, you learn nothing. When you watch the tmux pane in real-time, you see:
 
