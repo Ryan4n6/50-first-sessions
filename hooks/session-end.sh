@@ -17,8 +17,9 @@ cd "$REPO_ROOT"
 # Cleanup happens from main repo or next session.
 # ============================================================
 IN_WORKTREE=false
+GIT_DIR="$(git rev-parse --git-dir 2>/dev/null || echo "")"
 GIT_COMMON="$(git rev-parse --git-common-dir 2>/dev/null || echo "")"
-if echo "$GIT_COMMON" | grep -q '/worktrees/'; then
+if [ -n "$GIT_DIR" ] && [ -n "$GIT_COMMON" ] && [ "$GIT_DIR" != "$GIT_COMMON" ]; then
     IN_WORKTREE=true
 fi
 
