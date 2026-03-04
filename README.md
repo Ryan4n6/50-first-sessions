@@ -174,6 +174,12 @@ See [docs/customization.md](docs/customization.md) for:
 - Custom hooks (adding project-specific context injection)
 - Teams (shared memory conventions)
 
+## Parallel Sessions (Advanced)
+
+For large implementation plans, you can run a **supervisor + executor** pattern: one Claude session autonomously executes tasks while another watches via tmux and can intervene in real-time. This solves the context window problem for 10+ task plans without losing visibility.
+
+See [docs/parallel-sessions.md](docs/parallel-sessions.md) for the full guide.
+
 ## Known Limitations
 
 - **Memory can go stale.** If you refactor code but don't update memory files, Claude will operate on outdated context. The session-start hook warns when `file-map.md` looks stale, but ultimately you need to keep memory files current.
